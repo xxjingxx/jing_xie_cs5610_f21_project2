@@ -1,21 +1,61 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import { store } from './app/store';
-import { Provider } from 'react-redux';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Board from './components/Board'
+import Welcome from './components/Welcome'
+import Rules from './components/Rules'
+import GameOptions from './components/GameOptions'
+import reducers from './reducers/reducers.js'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import {useMatch} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+const store = createStore(
+  reducers,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  <Provider store={store}>
+    <h1>Jing's Battleship field</h1>
+    <Router>
+      <button>
+        <Link to={'/'}>Home </Link>
+      </button>
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+      <button>
+        <Link to={'/rules'}>How to play </Link>
+      </button>
+
+      <button>
+        <Link to={'/gameOptions'}>Start game </Link>
+      </button>
+
+      {/* <button>
+        <Link to={'/gameBoard'}>Start free mode </Link>
+      </button>
+
+      <button>
+        <Link to={'/gameBoard'}>Start AI mode </Link>
+      </button> */}
+
+      {/* <button>
+        <Link to={'/gameBoard/free'}>free play </Link>
+      </button>
+
+      <button>
+        <Link to={'/gameBoard/AI'}>play with ai</Link>
+      </button> */}
+
+      <Routes>
+        <Route exact path='/' element={<Welcome />} />
+        <Route exact path='/rules' element={<Rules />} />
+        <Route path='/gameOptions' element={<GameOptions />} >
+          <Route path=":mode" element={<Board />} />
+        </Route>
+      </Routes>
+    </Router>
+  </Provider>,
+  document.getElementById('root')
+)

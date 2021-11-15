@@ -1,0 +1,37 @@
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:40px;
+    width:40px;
+    border:1px solid grey;
+    background-color: skyblue;
+}
+
+#hover {
+    background-color: palevioletred;
+}
+
+#ship1 {
+    background-color: green;
+}
+
+#ship2 {
+    background-color: indianred;
+}
+
+#ship3 {
+    background-color: plum;
+}
+
+#ship4 {
+    background-color: orange;
+}
+
+#ship5 {
+    background-color: pink;
+}
+
+#defaultColor {
+    background-color: skyblue;
+}
