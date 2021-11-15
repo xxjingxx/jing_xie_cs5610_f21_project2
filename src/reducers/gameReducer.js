@@ -1,3 +1,4 @@
+// computer board state
 const ship1 = {
   shipName: 'ship1',
   size: 2,
@@ -194,7 +195,7 @@ const humanState = {
 const globalState = {
   computerState,
   humanState,
-  aiTurn: false
+  winner: ''
 }
 
 function clearBoard (board) {
@@ -227,108 +228,154 @@ function resetShips (board) {
   }
 }
 
+function checkWin (x, y, board) {
+  for (let i = 0; i < board.shipList.length; i++) {
+    for (let j = 0; j < board.shipList[i].locations.length; j++) {
+      if (
+        x === board.shipList[i].locations[j][0] &&
+        y === board.shipList[i].locations[j][1]
+      ) {
+        console.log('Hit')
+        board.boardState[x][y] = '✅'
+        board.isCheckedState[x][y] = true
+        board.shipList[i].size -= 1
+        if (board.shipList[i].size === 0) {
+          console.log('You sunk a ship')
+          board.num_of_ships -= 1
+          for (let k = 0; k < board.shipList[i].locations.length; k++) {
+            board.boardState[board.shipList[i].locations[k][0]][
+              board.shipList[i].locations[k][1]
+            ] = '🛳'
+          }
+          if (board.num_of_ships === 0) {
+            if (board === globalState.computerState) {
+              globalState.computerState.hasWon = true
+              globalState.winner = globalState.winner + 'You win!'
+              console.log('You win!')
+              return { ...globalState }
+            } else if (board === globalState.humanState) {
+              globalState.computerState.hasWon = true
+              globalState.winner = 'AI win!'
+              console.log('AI win!')
+              return { ...globalState }
+            }
+          }
+          return { ...globalState }
+        }
+        return { ...globalState }
+      } else if (
+        x !== board.shipList[i].locations[j][0] &&
+        y !== board.shipList[i].locations[j][1]
+      ) {
+        board.boardState[x][y] = '❌'
+        board.isCheckedState[x][y] = true
+      }
+    }
+  }
+}
+
+function selectDirection () {
+  return Math.floor(Math.random() * 2)
+}
+
+function checkAvailable (location, board) {
+  for (let i = 0; i < board.shipList.length; i++) {
+    for (let j = 0; j < board.shipList[i].size; j++) {
+      if (
+        location[0] === board.shipList[i].locations[j][0] &&
+        location[1] === board.shipList[i].locations[j][1]
+      ) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+function placeShip (ship, board) {
+  var xIndex = -1
+  var yIndex = -1
+  var direction = -1
+  var yLeftBound = -1
+  var xUpperBound = -1
+  var succeed = false
+  var selectAgain = true
+
+  while (!succeed) {
+    if (selectAgain === true) {
+      direction = selectDirection()
+      // direction = 0
+      selectAgain = false
+    }
+    //direction = 0
+    if (direction === 0) {
+      // horizontal
+      xIndex = Math.floor(Math.random() * 10)
+      yLeftBound = Math.floor(Math.random() * (10 - ship.size)) + 1
+      for (let i = 0; i < ship.size; i++) {
+        if (checkAvailable([xIndex, yLeftBound + i], board) === false) {
+          selectAgain = true
+          break
+        }
+      }
+      if (selectAgain === false) {
+        for (let i = 0; i < ship.size; i++) {
+          ship.locations[i][0] = xIndex
+          ship.locations[i][1] = yLeftBound + i
+        }
+        succeed = true
+      }
+    } else if (direction === 1) {
+      // vertical
+      yIndex = Math.floor(Math.random() * 10)
+      xUpperBound = Math.floor(Math.random() * (10 - ship.size)) + 1
+      for (let i = 0; i < ship.size; i++) {
+        if (checkAvailable([xUpperBound + i, yIndex], board) === false) {
+          selectAgain = true
+          break
+        }
+      }
+      if (selectAgain === false) {
+        for (let i = 0; i < ship.size; i++) {
+          ship.locations[i][0] = xUpperBound + i
+          ship.locations[i][1] = yIndex
+        }
+        succeed = true
+      }
+    }
+  }
+}
+
 function generateRandomBoard (board) {
   clearBoard(board)
   resetShips(board)
-  board.shipList[0].locations = [
-    [4, 0],
-    [4, 1],
-    [4, 2],
-    [4, 3],
-    [4, 4]
-  ]
-  board.shipList[1].locations = [
-    [3, 0],
-    [3, 1],
-    [3, 2],
-    [3, 3]
-  ]
-  board.shipList[2].locations = [
-    [2, 0],
-    [2, 1],
-    [2, 2]
-  ]
-  board.shipList[3].locations = [
-    [1, 0],
-    [1, 1],
-    [1, 2]
-  ]
-  board.shipList[4].locations = [
-    [0, 0],
-    [0, 1]
-  ]
+  for (let i = 0; i < board.shipList.length; i++) {
+    placeShip(board.shipList[i], board)
+  }
   return board
 }
 
-function checkWin(x, y, board) {
-    for (let i = 0; i < board.shipList.length; i++) {
-        for (let j = 0; j < board.shipList[i].locations.length;j++) {
-            if (
-                x === board.shipList[i].locations[j][0] &&
-                y === board.shipList[i].locations[j][1]
-              ) {
-                console.log('Hit')
-                board.boardState[x][y] = '✅'
-                board.isCheckedState[x][y] = true
-                board.shipList[i].size -= 1
-                if (board.shipList[i].size === 0) {
-                  console.log('You sunk a ship')
-                  board.num_of_ships -= 1
-                  for (
-                    let k = 0;
-                    k < board.shipList[i].locations.length;
-                    k++
-                  ) {
-                    board.boardState[
-                        board.shipList[i].locations[k][0]
-                    ][board.shipList[i].locations[k][1]] = '🛳'
-                  }
-                  if (board.num_of_ships == 0) {
-                      if (board === globalState.computerState) {
-                          globalState.computerState.hasWon = true
-                        console.log('You win!')
-                      } else if (board === globalState.humanState) {
-                          globalState.computerState.hasWon = true
-                          console.log("AI win!")
-                      }
-                  } 
-                  return { ...globalState }
-                }
-                return { ...globalState }
-              } else if (
-                x !== board.shipList[i].locations[j][0] &&
-                y !== board.shipList[i].locations[j][1]
-              ) {
-                board.boardState[x][y] = '❌'
-                board.isCheckedState[x][y] = true
-              }
-        }
+function generateRandomMove (board) {
+  var rand = -1
+  var x = -1
+  var y = -1
+
+  while (true) {
+    rand = Math.floor(Math.random() * 100)
+    x = Math.floor(rand / 10)
+    y = Math.floor(rand % 10)
+    if (board.isCheckedState[x][y] === false) {
+      break
     }
+  }
+  console.log(rand)
+  console.log(x)
+  console.log(y)
+  // if (globalState.aiTurn === true) {
+  checkWin(x, y, board)
+  // globalState.aiTurn = false
+  // }
 }
-
-function generateRandomMove(board) {
-    var rand = -1
-    var x = -1
-    var y = -1
-
-    while(true) {
-        rand = Math.floor(Math.random() * 100)
-        x = Math.floor(rand / 10)
-        y = Math.floor(rand % 10)
-        if (board.isCheckedState[x][y] === false) {
-            break
-        }
-    }
-    console.log(rand)
-    console.log(x)
-    console.log(y)
-    // if (globalState.aiTurn === true) {
-        checkWin(x, y, board)
-        // globalState.aiTurn = false
-    // }
-    
-}
-
 
 export default function gameReducer (state, action) {
   if (state === undefined) {
@@ -339,26 +386,23 @@ export default function gameReducer (state, action) {
   }
 
   if (action.type === 'boardClick') {
-      if (state.computerState.hasWon || state.humanState.hasWon) {
-          return {...state}
-      }
+    if (state.computerState.hasWon || state.humanState.hasWon) {
+      return { ...state }
+    }
     if (action.boardType === 'computer') {
       if (state.computerState.isCheckedState[action.x][action.y] === false) {
-          checkWin(action.x, action.y, state.computerState)
-        //   state.aiTurn = true
+        checkWin(action.x, action.y, state.computerState)
         generateRandomMove(state.humanState)
-
-        //   return {...state}
       }
       // computer move
       //setTimeout(()=>{checkWin(5, 5, state.humanState), 1000})
       //checkWin(5, 5, state.humanState)
       //if (state.aiTurn === true) {
-          //generateRandomMove(state.humanState)
-        //  return {...state}
+      //generateRandomMove(state.humanState)
+      //  return {...state}
       //}
-      
-      return {...state}
+
+      return { ...state }
     }
     return { ...state }
   }
@@ -383,53 +427,34 @@ export default function gameReducer (state, action) {
     }
   }
 
-  // if (
-  //   action.type === 'boardClick' &&
-  //   state.isCheckedState[action.x][action.y] === false
-  // ) {
-  //   for (let i = 0; i < state.shipList.length; i++) {
-  //     for (let j = 0; j < state.shipList[i].locations.length; j++) {
-  //       if (
-  //         action.x === state.shipList[i].locations[j][0] &&
-  //         action.y === state.shipList[i].locations[j][1]
-  //       ) {
-  //         console.log('Hit')
-  //         state.boardState[action.x][action.y] = '✅'
-  //         state.isCheckedState[action.x][action.y] = true
-  //         state.shipList[i].size -= 1
-  //         if (state.shipList[i].size === 0) {
-  //           console.log('You sunk a ship')
-  //           state.num_of_ships = state.num_of_ships - 1
-  //           for (let k = 0; k < state.shipList[i].locations.length; k++) {
-  //             state.boardState[state.shipList[i].locations[k][0]][
-  //               state.shipList[i].locations[k][1]
-  //             ] = '🛳'
-  //           }
-  //           if (state.num_of_ships == 0) {
-  //             console.log('You win!')
-  //           }
-  //           return { ...state }
-  //         }
-  //         return { ...state }
-  //       } else if (
-  //         action.x !== state.shipList[i].locations[j][0] &&
-  //         action.y !== state.shipList[i].locations[j][1]
-  //       ) {
-  //         state.boardState[action.x][action.y] = '❌'
-  //         state.isCheckedState[action.x][action.y] = true
-  //         console.log('Missed')
-  //       }
-  //     }
-  //   }
-  //   return { ...state }
-  // }
-
   if (action.type === 'NEW_GAME') {
+    // if (action.mode === 'Free') {
+    //   generateRandomBoard(globalState.computerState)
+    //   generateRandomBoard(globalState.humanState)
+    //   globalState.computerState.hasWon = false
+    //   globalState.humanState.hasWon = false
+    //   for (let i = 0; i < globalState.humanState.isCheckedState.length; i++) {
+    //     for (
+    //       let j = 0;
+    //       j < globalState.humanState.isCheckedState[i].length;
+    //       j++
+    //     ) {
+    //       globalState.humanState.isCheckedState[i][j] = true
+    //     }
+    //   }
+    // //   return { ...state }
+    // } else if (action.mode === 'AI') {
+    //   generateRandomBoard(globalState.computerState)
+    //   generateRandomBoard(globalState.humanState)
+    //   globalState.computerState.hasWon = false
+    //   globalState.humanState.hasWon = false
+    // //   return { ...state }
+    // }
     generateRandomBoard(globalState.computerState)
     generateRandomBoard(globalState.humanState)
     globalState.computerState.hasWon = false
     globalState.humanState.hasWon = false
-    return { ...state }
+    return {...state}
   }
   return state
 }

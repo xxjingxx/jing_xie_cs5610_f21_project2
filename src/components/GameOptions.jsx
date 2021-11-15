@@ -1,8 +1,8 @@
 import React from 'react'
 import Board from './Board'
 import { useDispatch } from 'react-redux';
-import {useParams} from 'react-router-dom'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+// import {useParams} from 'react-router-dom'
+// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import {useMatch} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import {Outlet} from 'react-router-dom'
@@ -23,7 +23,7 @@ function GameOptions() {
     // let {path, url} = useMatch();
     // const options = getOptions();
     // const { userID, id } = useParams();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     return (
         <div>
         {/* <Router>

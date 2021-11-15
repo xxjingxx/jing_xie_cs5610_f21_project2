@@ -3,12 +3,17 @@
     flex-direction: row;
 }
 
+.MobileContainer {
+    display: flex;
+    flex-direction: column;
+}
+
 .Board {
     display: grid;
-    grid-template-columns: repeat(10, 40px);
-    grid-template-rows: repeat(10, 40px);
-    width: 400px;
-    height: 400px;
+    grid-template-columns: repeat(10, 38px);
+    grid-template-rows: repeat(10, 38px);
+    width: 380px;
+    height: 380px;
     /* border: 3px navy solid; */
-    margin:20px
+    margin:10px
 }
