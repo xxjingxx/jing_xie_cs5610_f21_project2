@@ -8,7 +8,6 @@ import reducers from './reducers/reducers.js'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import {useMatch} from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 const store = createStore(
@@ -32,27 +31,11 @@ ReactDOM.render(
         <Link to={'/gameOptions'}>Start game </Link>
       </button>
 
-      {/* <button>
-        <Link to={'/gameBoard'}>Start free mode </Link>
-      </button>
-
-      <button>
-        <Link to={'/gameBoard'}>Start AI mode </Link>
-      </button> */}
-
-      {/* <button>
-        <Link to={'/gameBoard/free'}>free play </Link>
-      </button>
-
-      <button>
-        <Link to={'/gameBoard/AI'}>play with ai</Link>
-      </button> */}
-
       <Routes>
         <Route exact path='/' element={<Welcome />} />
         <Route exact path='/rules' element={<Rules />} />
-        <Route path='/gameOptions' element={<GameOptions />} >
-          <Route path=":mode" element={<Board />} />
+        <Route path='/gameOptions' element={<GameOptions />}>
+          <Route path=':mode' element={<Board />} />
         </Route>
       </Routes>
     </Router>

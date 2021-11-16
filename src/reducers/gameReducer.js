@@ -195,7 +195,8 @@ const humanState = {
 const globalState = {
   computerState,
   humanState,
-  winner: ''
+  winner: '',
+  freeMode: false
 }
 
 function clearBoard (board) {
@@ -211,21 +212,11 @@ function clearBoard (board) {
   }
 }
 
-function clearAllBoards () {
-  clearBoard(globalState.computerState)
-  clearBoard(globalState.humanState)
-}
-
-//   function resetShips () {
-//     for (let i = 0; i < st.shipList.length; i++) {
-//       st.shipList[i].size = st.shipList[i].locations.length
-//     }
-//   }
-
 function resetShips (board) {
   for (let i = 0; i < board.shipList.length; i++) {
     board.shipList[i].size = board.shipList[i].locations.length
   }
+  board.num_of_ships = 5
 }
 
 function checkWin (x, y, board) {
@@ -368,13 +359,7 @@ function generateRandomMove (board) {
       break
     }
   }
-  console.log(rand)
-  console.log(x)
-  console.log(y)
-  // if (globalState.aiTurn === true) {
   checkWin(x, y, board)
-  // globalState.aiTurn = false
-  // }
 }
 
 export default function gameReducer (state, action) {
@@ -392,7 +377,9 @@ export default function gameReducer (state, action) {
     if (action.boardType === 'computer') {
       if (state.computerState.isCheckedState[action.x][action.y] === false) {
         checkWin(action.x, action.y, state.computerState)
-        generateRandomMove(state.humanState)
+        if (state.freeMode === false) {
+          generateRandomMove(state.humanState)
+        }
       }
       // computer move
       //setTimeout(()=>{checkWin(5, 5, state.humanState), 1000})
@@ -428,33 +415,21 @@ export default function gameReducer (state, action) {
   }
 
   if (action.type === 'NEW_GAME') {
-    // if (action.mode === 'Free') {
-    //   generateRandomBoard(globalState.computerState)
-    //   generateRandomBoard(globalState.humanState)
-    //   globalState.computerState.hasWon = false
-    //   globalState.humanState.hasWon = false
-    //   for (let i = 0; i < globalState.humanState.isCheckedState.length; i++) {
-    //     for (
-    //       let j = 0;
-    //       j < globalState.humanState.isCheckedState[i].length;
-    //       j++
-    //     ) {
-    //       globalState.humanState.isCheckedState[i][j] = true
-    //     }
-    //   }
-    // //   return { ...state }
-    // } else if (action.mode === 'AI') {
-    //   generateRandomBoard(globalState.computerState)
-    //   generateRandomBoard(globalState.humanState)
-    //   globalState.computerState.hasWon = false
-    //   globalState.humanState.hasWon = false
-    // //   return { ...state }
-    // }
-    generateRandomBoard(globalState.computerState)
-    generateRandomBoard(globalState.humanState)
-    globalState.computerState.hasWon = false
-    globalState.humanState.hasWon = false
-    return {...state}
+    if (action.mode === 'Free') {
+      generateRandomBoard(state.computerState)
+      generateRandomBoard(state.humanState)
+      state.computerState.hasWon = false
+      state.humanState.hasWon = false
+      state.freeMode = true
+      return { ...state }
+    } else if (action.mode === 'AI') {
+      generateRandomBoard(state.computerState)
+      generateRandomBoard(state.humanState)
+      state.computerState.hasWon = false
+      state.humanState.hasWon = false
+      state.freeMode = false
+      return { ...state }
+    }
   }
   return state
 }

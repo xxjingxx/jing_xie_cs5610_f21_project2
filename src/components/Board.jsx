@@ -1,13 +1,11 @@
 import React from 'react'
 import '../style/Board.css'
-import FreeMode from './FreeMode'
 import Reset from './Reset'
 import { Square } from './Square'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
-import { useEffect, useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { useState } from 'react'
-//import { Link } from 'react-router-dom';
 
 function useMediaQuery () {
   const [screenSize, setScreenSize] = useState([0, 0])
@@ -29,13 +27,17 @@ export default function Board () {
   const { mode } = useParams()
   const [width] = useMediaQuery()
 
-  function displayWinner () {
-    if (gameState.humanState.hasWon === true) {
-        return <span>AI win!</span>
-    } else if (gameState.computerState.hasWon === true) {
-        return <span>You wins!</span>
+  function findContainer (wid) {
+    return wid > 600 ? 'Container' : 'MobileContainer'
+  }
+
+  function displayWinner (state) {
+    if (state.humanState.hasWon === true) {
+      return "AI wins!"
+    } else if (state.computerState.hasWon === true) {
+      return "You win!"
     }
-}
+  }
 
   function findColor (boardType, i, j, state) {
     if (state.boardState[i][j] === '✅') {
@@ -100,46 +102,26 @@ export default function Board () {
     return boardComponent
   }
 
-  if (mode === 'Free') {
-    return (
-      <div>
-        <h3>You are in {mode} mode </h3>
-        {/* {displayWinner} */}
-        <Reset text='New Game'/>
+  return mode === 'Free' ? (
+    <div>
+      <h3>You are in {mode} mode, hit {<Reset text='New Game' mode={mode} />} to start!</h3>
+      <div>{displayWinner(gameState)}</div>
+      <div class='Board'>
+        {generateBoardComponent('computer', gameState.computerState)}
+      </div>
+    </div>
+  ) : (
+    <div>
+      <h3>You are in {mode} mode, hit {<Reset text='New Game' mode={mode} />} to start!</h3>
+      <div>{displayWinner(gameState)}</div>
+      <div class={findContainer(width)}>
         <div class='Board'>
           {generateBoardComponent('computer', gameState.computerState)}
         </div>
-      </div>
-    )
-  } else if (mode === 'AI') {
-    return width > 600 ? (
-      <div>
-        <h3>You are in {mode} mode</h3>
-        <Reset text='New Game'/>
-        <div class='Container'>
-          <div class='Board'>
-            {generateBoardComponent('computer', gameState.computerState)}
-          </div>
-          <div class='Board'>
-            {generateBoardComponent('human', gameState.humanState)}
-          </div>
+        <div class='Board'>
+          {generateBoardComponent('human', gameState.humanState)}
         </div>
       </div>
-    ) : (
-      <div>
-        <h3>You are in {mode} mode</h3>
-        {/* <span>{`${gameState.winner}`}</span> */}
-        <Reset text='New Game'/>
-        <div class='MobileContainer'>
-          <div class='Board'>
-            {generateBoardComponent('computer', gameState.computerState)}
-          </div>
-          <div class='Board'>
-            {generateBoardComponent('human', gameState.humanState)}
-          </div>
-        </div>
-      </div>
-    )
-  }
-  return <div></div>
+    </div>
+  )
 }

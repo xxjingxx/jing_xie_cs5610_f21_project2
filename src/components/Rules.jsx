@@ -1,14 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
-export default function Welcome() {
-    return (
-        <div class="Rules">
-            <p>rules rule rule rule</p>
-            {/* <button>
-               <Link to={"/gameBoard"}>start game</Link> 
-            </button> */}
-            
-        </div>
-    )
+export default function Rules () {
+  return (
+    <div class='Rules'>
+      <p>In Free mode, you'll find all the hidden fleets</p>
+      <p>
+        In AI mode, you'll find and destroy AI’s fleets before AI can destroy
+        yours!
+      </p>
+    </div>
+  )
 }
