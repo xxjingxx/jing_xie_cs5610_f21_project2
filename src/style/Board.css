@@ -10,9 +10,9 @@
 
 .Board {
     display: grid;
-    grid-template-columns: repeat(10, 38px);
-    grid-template-rows: repeat(10, 38px);
-    width: 380px;
-    height: 380px;
+    grid-template-columns: repeat(10, 35px);
+    grid-template-rows: repeat(10, 35px);
+    width: 350px;
+    height: 350px;
     margin: 10px
 }

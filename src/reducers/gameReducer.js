@@ -236,7 +236,7 @@ function checkWin (x, y, board) {
           for (let k = 0; k < board.shipList[i].locations.length; k++) {
             board.boardState[board.shipList[i].locations[k][0]][
               board.shipList[i].locations[k][1]
-            ] = '🛳'
+            ] = '⚓️'
           }
           if (board.num_of_ships === 0) {
             if (board === globalState.computerState) {
@@ -381,14 +381,6 @@ export default function gameReducer (state, action) {
           generateRandomMove(state.humanState)
         }
       }
-      // computer move
-      //setTimeout(()=>{checkWin(5, 5, state.humanState), 1000})
-      //checkWin(5, 5, state.humanState)
-      //if (state.aiTurn === true) {
-      //generateRandomMove(state.humanState)
-      //  return {...state}
-      //}
-
       return { ...state }
     }
     return { ...state }
